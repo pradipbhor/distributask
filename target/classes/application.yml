@@ -1,0 +1,49 @@
+spring:
+  application:
+    name: distributask
+
+  datasource:
+    url: jdbc:mysql://${MYSQL_HOST:localhost}:3306/${MYSQL_DB:distributask}?createDatabaseIfNotExist=true&useSSL=false&allowPublicKeyRetrieval=true
+    username: ${MYSQL_USER:root}
+    password: ${MYSQL_PASSWORD:root}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: update          # creates/alters tables on startup; use "validate" in production
+    show-sql: false
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQL8Dialect
+
+  data:
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
+
+# ── Scheduler configuration ───────────────────────────────────────────────
+scheduler:
+  poll-interval-ms: 5000          # how often the engine queries MySQL for due jobs
+  thread-pool:
+    core-size: 5                  # always-warm threads
+    max-size: 20                  # peak threads (created on demand)
+  rate-limit:
+    max-concurrent-jobs: 10       # token bucket capacity per worker node
+
+# ── Actuator / Prometheus ─────────────────────────────────────────────────
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,prometheus,metrics
+  metrics:
+    export:
+      prometheus:
+        enabled: true
+
+server:
+  port: ${SERVER_PORT:8080}
+
+logging:
+  level:
+    com.distributask: INFO

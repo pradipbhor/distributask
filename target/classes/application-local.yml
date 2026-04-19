@@ -1,0 +1,18 @@
+# Local development profile (./mvnw spring-boot:run -Dspring-boot.run.profiles=local)
+# Assumes MySQL and Redis are running via: docker compose up mysql redis -d
+spring:
+  datasource:
+    url: jdbc:mysql://localhost:3306/distributask?createDatabaseIfNotExist=true&useSSL=false&allowPublicKeyRetrieval=true
+    username: root
+    password: root
+  data:
+    redis:
+      host: localhost
+      port: 6379
+
+scheduler:
+  poll-interval-ms: 2000    # faster polling for local dev
+
+logging:
+  level:
+    com.distributask: DEBUG
